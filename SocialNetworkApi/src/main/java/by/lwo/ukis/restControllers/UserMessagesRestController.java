@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class UserMessagesRestController {
         this.usersMessagesService = usersMessagesService;
     }
 
-    @GetMapping(value = "/messages/")
+    @GetMapping(value = "/messages")
     public ResponseEntity<Object> getAllMessagesBySenderAndRecipientId(@RequestParam(name = "recipientId", required = true) String recipientId,
                                                                        @RequestParam(name = "pageNo", required = false, defaultValue = "0") String pageNo,
                                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "2") String pageSize,
@@ -92,8 +93,8 @@ public class UserMessagesRestController {
     }
 
 
-    @PostMapping("/messages/")
-    public ResponseEntity<Object> saveUserMessages(@RequestBody UserMessagesDto userMessagesDto, Authentication authentication) {
+    @PostMapping("/messages")
+    public ResponseEntity<Object> saveUserMessages(@Valid @RequestBody UserMessagesDto userMessagesDto, Authentication authentication) {
         try {
 
             String senderName = authentication.getName();
@@ -139,7 +140,7 @@ public class UserMessagesRestController {
         }
     }
 
-    @PutMapping("/messages/status/{id}")
+    @PutMapping("/messages/{id}/status")
     public ResponseEntity<Object> updateUserMessageStatus(@PathVariable("id") Long id, @RequestBody String status) {
         try {
             UserMessages userMessages = usersMessagesService.findMessageById(id);

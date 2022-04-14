@@ -34,9 +34,9 @@ public class FriendsServiceImpl implements FriendsService {
     }
 
     @Override
-    public List<Friends> findFriendByUserAndFriendId(Long userId, Long friendId) {
-        List<Friends> result = friendsRepository.getFriendsByUserAndFriendId(userId, friendId);
-        log.info("IN findFriendByUserAndFriendId - {} users found", result);
+    public Friends findFriendByUserAndFriendId(Long userId, Long friendId) {
+        Friends result = friendsRepository.getFriendsByUserAndFriendId(userId, friendId);
+        log.info("IN findFriendByUserAndFriendId - {} friend found", result);
         return result;
     }
 
@@ -55,7 +55,7 @@ public class FriendsServiceImpl implements FriendsService {
 
     @Override
     public Friends updateFriendStatus(FriendsStatus status, User user, Long friendId) {
-        Friends userFriend = findFriendByUserAndFriendId(user.getId(), friendId).get(0);
+        Friends userFriend = findFriendByUserAndFriendId(user.getId(), friendId);
         userFriend.setFriendsStatus(status);
         Friends result = friendsRepository.save(userFriend);
         log.info("IN updateFriendStatus - friends: {} successfully updated", result);

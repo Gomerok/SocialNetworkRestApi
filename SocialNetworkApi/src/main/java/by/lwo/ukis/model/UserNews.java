@@ -11,10 +11,10 @@ import javax.persistence.*;
 @Data
 public class UserNews extends BaseEntity {
 
-    @Column(name = "name", length = 50)
+    @Column(name = "header")
     private String name;
 
-    @Column(name = "description", length = 500)
+    @Column(name = "description")
     private String description;
 
     @ManyToOne

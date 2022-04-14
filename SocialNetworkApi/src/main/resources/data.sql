@@ -72,3 +72,13 @@ VALUES (2, 2, 3, 'Im vasy', 'CREATED');
 INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
 VALUES (3, 3, 2, 'Hello vasy', 'CREATED');
 
+--News
+INSERT INTO user_news (id, user_id, header, description, news_status)
+VALUES (1, 2, 'Title', 'Hello', 'CREATED');
+
+INSERT INTO user_news (id, user_id, header, description, news_status)
+VALUES (2, 2, 'Title2', 'Hello', 'CREATED');
+
+INSERT INTO user_news (id, user_id, header, description, news_status)
+VALUES (3, 2, 'Title3', 'Hello', 'CREATED');
+

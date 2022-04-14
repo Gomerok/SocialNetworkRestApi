@@ -10,7 +10,7 @@ import java.util.List;
 public interface FriendsService {
     List<Friends> findAllFriendsByUserId(Long userId);
 
-    List<Friends> findFriendByUserAndFriendId(Long userId, Long friendId);
+    Friends findFriendByUserAndFriendId(Long userId, Long friendId);
 
     Friends saveFriend(UserFriendDto friends);
 

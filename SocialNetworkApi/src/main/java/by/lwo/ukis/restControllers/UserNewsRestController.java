@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,14 +101,13 @@ public class UserNewsRestController {
     }
 
     @PutMapping("/news/{id}")
-    public ResponseEntity<Object> updateUserNews(@PathVariable("id") Long id, @RequestBody UserNewsDto userNewsDto, Authentication authentication) {
+    public ResponseEntity<Object> updateUserNews(@PathVariable("id") Long id, @Valid @RequestBody UserNewsDto userNewsDto, Authentication authentication) {
         try {
             String bearerName = authentication.getName();
             User bearerUser = userService.findByUsername(bearerName);
 
             UserNews userNews = userNewsService.findUserNewsById(id);
             if (userNews != null) {
-
                 userNewsDto.setId(id);
                 UserNews updatedUserNews = userNewsService.updateUserNews(userNewsDto);
                 UserNewsDto result = UserNewsDto.fromUserNews(updatedUserNews);
@@ -121,23 +121,13 @@ public class UserNewsRestController {
         }
     }
 
-    @PutMapping("/news/status/{id}")
-    public ResponseEntity<Object> updateUserMessageStatus(@PathVariable("id") Long id, @RequestBody String status) {
+    @PutMapping("/news/{id}/status/")
+    public ResponseEntity<Object> updateUserMessageStatus(@PathVariable("id") Long id,@Valid @RequestBody UserNewsDto userNewsDto) {
         try {
             UserNews userNews = userNewsService.findUserNewsById(id);
 
-            boolean isEnum = false;
-            for (NewsStatus e : NewsStatus.values()) {
-                if (status.equals(e.toString())) {
-                    isEnum = true;
-                }
-            }
-            if (!isEnum) {
-                return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-            }
-
             if (userNews != null) {
-                UserNews updatedUserNews = userNewsService.updateUserNewsStatus(NewsStatus.valueOf(status), userNews);
+                UserNews updatedUserNews = userNewsService.updateUserNewsStatus(NewsStatus.valueOf(userNewsDto.getNewsStatus()), userNews);
                 UserNewsDto result = UserNewsDto.fromUserNews(updatedUserNews);
                 return new ResponseEntity<Object>(result, HttpStatus.OK);
             } else {

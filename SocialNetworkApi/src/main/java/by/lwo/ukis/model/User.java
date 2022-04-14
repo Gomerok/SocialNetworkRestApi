@@ -40,6 +40,9 @@ public class User extends BaseEntity {
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles;
 
+    @Lob
+    private byte[] photo;
+
     @Override
     public String toString() {
         return "User{" +

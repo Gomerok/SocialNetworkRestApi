@@ -6,6 +6,7 @@ import by.lwo.ukis.security.jwt.JwtTokenProvider;
 import by.lwo.ukis.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,9 +27,7 @@ import java.util.Map;
 public class AuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
-
     private final JwtTokenProvider jwtTokenProvider;
-
     private final UserService userService;
 
     @Autowired
@@ -39,14 +38,15 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody AuthenticationDto requestDto) {
+    public ResponseEntity<Object> login(@RequestBody AuthenticationDto requestDto) {
         try {
             String username = requestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
             User user = userService.findByUsername(username);
 
             if (user == null) {
-                throw new UsernameNotFoundException("User with username: " + username + " not found");
+                return new ResponseEntity<Object>("User with username: " + username + " not found",HttpStatus.NOT_FOUND) ;
+//                throw new UsernameNotFoundException("User with username: " + username + " not found");
             }
 
             String token = jwtTokenProvider.createToken(username, user.getRoles());
@@ -57,7 +57,8 @@ public class AuthenticationRestController {
 
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid username or password");
+            return new ResponseEntity<Object>("Invalid username or password",HttpStatus.NOT_FOUND) ;
+//            throw new BadCredentialsException("Invalid username or password");
         }
     }
 }

@@ -1,6 +1,7 @@
 package by.lwo.ukis.service;
 
 import by.lwo.ukis.dto.UserDto;
+import by.lwo.ukis.dto.UserRegistrationDto;
 import by.lwo.ukis.model.UserMessages;
 import by.lwo.ukis.model.enums.Status;
 import by.lwo.ukis.model.User;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface UserService {
 
-    User register(UserDto userDto);
+    User register(UserRegistrationDto userRegistrationDto);
 
     List<User> getAll();
 

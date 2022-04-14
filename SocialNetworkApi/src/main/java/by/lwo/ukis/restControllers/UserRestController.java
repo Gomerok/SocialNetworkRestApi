@@ -52,29 +52,9 @@ public class UserRestController {
         }
     }
 
-//    @GetMapping("/")
-//    public ResponseEntity<Object> getAllUsers() {
-//        try {
-//            List<User> users = userService.getAll();
-//
-//            if (users == null) {
-//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//            }
-//            List<UserDto> result = new ArrayList<>();
-//
-//            for (User user : users) {
-//                result.add(UserDto.fromUser(user));
-//            }
-//            return new ResponseEntity<Object>(result, HttpStatus.OK);
-//        } catch (Exception ex) {
-//            log.error(ex.getMessage(), ex);
-//            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
     @GetMapping("/")
     public ResponseEntity<Object> getAllUsersSearchParamPagination(@RequestParam(name = "param", required = false, defaultValue = "") String param,
-                                                                   @RequestParam(name = "pageNo", required = false, defaultValue = "1") String pageNo,
+                                                                   @RequestParam(name = "pageNo", required = false, defaultValue = "0") String pageNo,
                                                                    @RequestParam(name = "pageSize", required = false, defaultValue = "2") String pageSize) {
         try {
             if (!NumberUtils.isNumber(pageNo) || !NumberUtils.isNumber(pageSize)) {
@@ -84,33 +64,17 @@ public class UserRestController {
             Page<User> userPage = userService.findAllUserWithSearchParamPagination(param, pageable);
 
             int totalElements = (int) userPage.getTotalElements();
-            Page<AdminUserDto> adminUserDtoPage = new PageImpl<AdminUserDto>(userPage.getContent()
+            Page<UserDto> userDtoPage = new PageImpl<UserDto>(userPage.getContent()
                     .stream()
-                    .map(user -> AdminUserDto.fromUser(user))
+                    .map(user -> UserDto.fromUser(user))
                     .collect(Collectors.toList()), pageable, totalElements);
 
-            List<AdminUserDto> resultList = adminUserDtoPage.getContent();
+            List<UserDto> resultList = userDtoPage.getContent();
 
             if (resultList.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity<Object>(resultList, HttpStatus.OK);
-        } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
-            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PostMapping("/")
-    public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
-        try {
-            if (userService.findByUsername(userDto.getUsername()) == null) {
-                User savedUser = userService.register(userDto);
-                UserDto result = UserDto.fromUser(savedUser);
-                return new ResponseEntity<Object>(result, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<Object>(HttpStatus.FOUND);
-            }
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);

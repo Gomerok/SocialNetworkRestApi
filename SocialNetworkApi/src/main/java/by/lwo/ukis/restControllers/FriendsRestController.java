@@ -1,10 +1,9 @@
 package by.lwo.ukis.restControllers;
 
-import by.lwo.ukis.dto.AdminUserDto;
 import by.lwo.ukis.dto.UserFriendDto;
 import by.lwo.ukis.model.Friends;
-import by.lwo.ukis.model.enums.FriendsStatus;
 import by.lwo.ukis.model.User;
+import by.lwo.ukis.model.enums.FriendsStatus;
 import by.lwo.ukis.service.FriendsService;
 import by.lwo.ukis.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v1/users/friends")
+@RequestMapping(value = "/api/v1/users")
 public class FriendsRestController {
 
     private final UserService userService;
@@ -31,7 +31,7 @@ public class FriendsRestController {
         this.friendsService = friendsService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/friends")
     public ResponseEntity<Object> getAllFriends(Authentication authentication) {
         try {
             String bearerName = authentication.getName();
@@ -54,10 +54,27 @@ public class FriendsRestController {
         }
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable(name = "id") Long id) {
+    @GetMapping(value = "/friends/{id}")
+    public ResponseEntity<Object> getFriendById(@PathVariable(name = "id") Long id) {
         try {
             Friends friends = friendsService.findFriendById(id);
+
+            if (friends == null) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            UserFriendDto result = UserFriendDto.fromFriends(friends);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/{friendId}/friends")
+    public ResponseEntity<Object> getFriendByUserFriendId(@PathVariable(name = "friendId") Long friendId,Authentication authentication) {
+        try {
+            Friends friends = friendsService.findFriendByUserAndFriendId(userService.findByUsername(authentication.getName()).getId(), friendId);
 
             if (friends == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -72,8 +89,8 @@ public class FriendsRestController {
     }
 
 
-    @PostMapping("/")
-    public ResponseEntity<Object> saveFriend(@RequestBody UserFriendDto userFriendDto, Authentication authentication) {
+    @PostMapping("/friends")
+    public ResponseEntity<Object> saveFriend(@Valid @RequestBody UserFriendDto userFriendDto, Authentication authentication) {
         try {
             String bearerName = authentication.getName();
             User user = userService.findByUsername(bearerName);
@@ -82,9 +99,9 @@ public class FriendsRestController {
                 return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
             }
 
-            List<Friends> userFriends = friendsService.findFriendByUserAndFriendId(user.getId(), userFriendDto.getFriendId());
+            Friends userFriends = friendsService.findFriendByUserAndFriendId(user.getId(), userFriendDto.getFriendId());
 
-            if (userFriends.isEmpty()) {
+            if (userFriends==null) {
                 Friends savedFriend = friendsService.saveFriend(userFriendDto);
                 UserFriendDto result = UserFriendDto.fromFriends(savedFriend);
                 return new ResponseEntity<Object>(result, HttpStatus.OK);
@@ -97,29 +114,24 @@ public class FriendsRestController {
         }
     }
 
-    @PutMapping("/status/{friendId}")
-    public ResponseEntity<Object> updateUserFriendStatus(@PathVariable("friendId") Long friendId, @RequestBody String status, Authentication authentication) {
+    @PutMapping("/{friendId}/friends/status")
+    public ResponseEntity<Object> updateUserFriendStatus(@PathVariable("friendId") Long friendId,
+                                                         @Valid @RequestBody UserFriendDto userFriendDto,
+                                                         Authentication authentication) {
         try {
             String bearerName = authentication.getName();
-            User isUser = userService.findById(friendId);
+            User friend = userService.findById(friendId);
             User bearerUser = userService.findByUsername(bearerName);
 
-            boolean isEnum = false;
-            for (FriendsStatus e : FriendsStatus.values()) {
-                if (status.equals(e.toString())) {
-                    isEnum = true;
-                }
-            }
-            if (!isEnum) {
+            if(userFriendDto == null){
                 return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
             }
-
-            if (friendsService.findFriendByUserAndFriendId(bearerUser.getId(), friendId).isEmpty()) {
-                return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+            if (friendsService.findFriendByUserAndFriendId(bearerUser.getId(), friendId)==null) {
+                return new ResponseEntity<Object>(HttpStatus.NOT_FOUND);
             }
 
-            if (isUser != null) {
-                Friends updatedFriend = friendsService.updateFriendStatus(FriendsStatus.valueOf(status), bearerUser, isUser.getId());
+            if (friend != null) {
+                Friends updatedFriend = friendsService.updateFriendStatus(FriendsStatus.valueOf(userFriendDto.getFriendStatus()), bearerUser, friend.getId());
                 UserFriendDto result = UserFriendDto.fromFriends(updatedFriend);
                 return new ResponseEntity<Object>(result, HttpStatus.OK);
             } else {

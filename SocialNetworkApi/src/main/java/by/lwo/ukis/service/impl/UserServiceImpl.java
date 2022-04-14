@@ -1,6 +1,7 @@
 package by.lwo.ukis.service.impl;
 
 import by.lwo.ukis.dto.UserDto;
+import by.lwo.ukis.dto.UserRegistrationDto;
 import by.lwo.ukis.model.*;
 import by.lwo.ukis.model.enums.Status;
 import by.lwo.ukis.repository.RoleRepository;
@@ -32,13 +33,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(UserDto userDto) {
-        User user = userDto.toUser();
+    public User register(UserRegistrationDto userRegistrationDto) {
+        User user = userRegistrationDto.toUser();
         Role roleUser = roleRepository.findByName("ROLE_USER");
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(roleUser);
 
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
         user.setRoles(userRoles);
         user.setStatus(Status.ACTIVE);
 
@@ -87,10 +88,9 @@ public class UserServiceImpl implements UserService {
     public User update(UserDto updatedUser) {
 
         User oldUser = findById(updatedUser.getId());
-//        if (updatedUser.getUsername() != null) oldUser.setUsername(updatedUser.getUsername());
+        if (updatedUser.getUsername() != null) oldUser.setUsername(updatedUser.getUsername());
         if (updatedUser.getFirstName() != null) oldUser.setFirstName(updatedUser.getFirstName());
         if (updatedUser.getLastName() != null) oldUser.setLastName(updatedUser.getLastName());
-//        if (updatedUser.getPassword() != null) oldUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
 
         User result = userRepository.save(oldUser);
         log.info("IN update - user with id: {} successfully update", result);
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> findAllUserWithSearchParamPagination(String param, Pageable pageable) {
         Page<User> result = userRepository.findAllWhitSearchParamPagination(param ,pageable);
-        log.info("IN findAllUserWithSearchParamPagination - found {} page with search param {}", result.getTotalElements(), param);
+        log.info("IN findAllUserWithSearchParamPagination - found {} users with search param {}", result.getTotalElements(), param);
         return result;
     }
 }

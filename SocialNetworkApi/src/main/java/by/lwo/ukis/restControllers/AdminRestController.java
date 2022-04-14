@@ -2,6 +2,7 @@ package by.lwo.ukis.restControllers;
 
 import by.lwo.ukis.dto.AdminUserDto;
 import by.lwo.ukis.dto.UserDto;
+import by.lwo.ukis.dto.UserRegistrationDto;
 import by.lwo.ukis.model.enums.Status;
 import by.lwo.ukis.model.User;
 import by.lwo.ukis.service.UserService;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,31 +50,9 @@ public class AdminRestController {
         }
     }
 
-
-//    @GetMapping("/users")
-//    public ResponseEntity<Object> getAllUsers() {
-//        try {
-//            List<User> users = userService.getAll();
-//
-//            if (users.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//            }
-//            List<AdminUserDto> result = new ArrayList<>();
-//
-//            for (User user : users) {
-//                result.add(AdminUserDto.fromUser(user));
-//            }
-//
-//            return new ResponseEntity<Object>(result, HttpStatus.OK);
-//        } catch (Exception ex) {
-//            log.error(ex.getMessage(), ex);
-//            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
     @GetMapping("/users")
     public ResponseEntity<Object> getAllUsersSearchParamPagination(@RequestParam(name = "param", required = false, defaultValue = "") String param,
-                                                                   @RequestParam(name = "pageNo", required = false, defaultValue = "1") String pageNo,
+                                                                   @RequestParam(name = "pageNo", required = false, defaultValue = "0") String pageNo,
                                                                    @RequestParam(name = "pageSize", required = false, defaultValue = "2") String pageSize) {
         try {
             if (!NumberUtils.isNumber(pageNo) || !NumberUtils.isNumber(pageSize)) {
@@ -100,15 +80,15 @@ public class AdminRestController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
-        try {
-            User findUser = userService.findByUsername(userDto.getUsername());
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto) {
+        try{
+            User findUser = userService.findByUsername(userRegistrationDto.getUsername());
             if (findUser == null) {
-                User savedUser = userService.register(userDto);
-                AdminUserDto result = AdminUserDto.fromUser(savedUser);
+                User savedUser = userService.register(userRegistrationDto);
+                UserDto result = UserDto.fromUser(savedUser);
                 return new ResponseEntity<Object>(result, HttpStatus.OK);
             } else {
-                return new ResponseEntity<Object>(HttpStatus.FOUND);
+                return new ResponseEntity<Object>("User with username: "+userRegistrationDto.getUsername()+"exist",HttpStatus.FOUND);
             }
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
@@ -117,10 +97,13 @@ public class AdminRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto, Authentication authentication) {
+    public ResponseEntity<Object> updateUser(@PathVariable("id") Long id,@Valid @RequestBody UserDto userDto, Authentication authentication) {
         try {
             User user = userService.findById(id);
 
+            if(userDto.getUsername().equals(user.getUsername())){
+                return new ResponseEntity<Object>("User with username: "+user.getUsername()+" exist", HttpStatus.FOUND);
+            }
             if (user != null) {
                 userDto.setId(user.getId());
                 User updatedUser = userService.update(userDto);
@@ -152,7 +135,7 @@ public class AdminRestController {
         }
     }
 
-    @PutMapping("/users/status/{id}")
+    @PutMapping("/users/{id}/status")
     public ResponseEntity<Object> updateUserStatus(@PathVariable("id") Long id, @RequestBody String status) {
         try {
             User user = userService.findById(id);
