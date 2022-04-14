@@ -38,11 +38,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers(LOGIN_ENDPOINT).permitAll()
                 .antMatchers(REGISTRATION_ENDPOINT).permitAll()
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
+        http.headers().frameOptions().disable();
     }
 }
