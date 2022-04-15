@@ -15,9 +15,9 @@ public class UserNewsDto {
     @JsonIgnore
     private Long id;
 
-    @Pattern(regexp = "^[a-zA-Z0-9,.()!?]{3,50}$", message = "Incorrect name")
+    @Pattern(regexp = "^[a-zA-Z0-9,.()!? ]{3,50}$", message = "Incorrect name")
     private String name;
-    @Pattern(regexp = "^[a-zA-Z0-9,.()!?]{3,500}$", message = "Incorrect description")
+    @Pattern(regexp = "^[a-zA-Z0-9,.()!? ]{3,500}$", message = "Incorrect description")
     private String description;
     private Long userId;
     @Pattern(regexp = "^(CREATED|DELETED|UPDATED)$", message = "Incorrect newsStatus")

@@ -85,12 +85,12 @@ public class UserRestController {
     public ResponseEntity<Object> updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserDto userDto, Authentication authentication) {
         try {
             String bearerName = authentication.getName();
-            User isUser = userService.findById(id);
+            User user = userService.findById(id);
             User bearerUser = userService.findByUsername(bearerName);
 
-            if (isUser != null) {
+            if (user != null) {
                 if (bearerUser.getId().equals(id)) {
-                    userDto.setId(isUser.getId());
+                    userDto.setId(user.getId());
                     User updatedUser = userService.update(userDto);
                     UserDto result = UserDto.fromUser(updatedUser);
                     return new ResponseEntity<Object>(result, HttpStatus.OK);

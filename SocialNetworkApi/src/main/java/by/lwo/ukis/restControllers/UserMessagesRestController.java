@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v1/users/messages")
+@RequestMapping(value = "/api/v1/users")
 public class UserMessagesRestController {
 
     private final UserService userService;
@@ -36,8 +36,8 @@ public class UserMessagesRestController {
         this.usersMessagesService = usersMessagesService;
     }
 
-    @GetMapping(value = "/messages")
-    public ResponseEntity<Object> getAllMessagesBySenderAndRecipientId(@RequestParam(name = "recipientId", required = true) String recipientId,
+    @GetMapping(value = "/{recipientId}/messages")
+    public ResponseEntity<Object> getAllMessagesBySenderAndRecipientId(@PathVariable(name = "recipientId") String recipientId,
                                                                        @RequestParam(name = "pageNo", required = false, defaultValue = "0") String pageNo,
                                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "2") String pageSize,
                                                                        Authentication authentication) {
@@ -93,21 +93,21 @@ public class UserMessagesRestController {
     }
 
 
-    @PostMapping("/messages")
-    public ResponseEntity<Object> saveUserMessages(@Valid @RequestBody UserMessagesDto userMessagesDto, Authentication authentication) {
+    @PostMapping("/{recipientId}/messages")
+    public ResponseEntity<Object> saveUserMessages(@PathVariable(name = "recipientId") Long recipientId,
+                                                   @Valid @RequestBody UserMessagesDto userMessagesDto, Authentication authentication) {
         try {
-
+            if (userService.findById(recipientId) == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
             String senderName = authentication.getName();
             User sender = userService.findByUsername(senderName);
             userMessagesDto.setSenderId(sender.getId());
+            userMessagesDto.setRecipientId(recipientId);
 
-            if (userService.findById(userMessagesDto.getRecipientId()) != null) {
-                UserMessages savedUserMessages = usersMessagesService.saveUserMessage(userMessagesDto);
-                UserMessagesDto result = UserMessagesDto.fromUserMessages(savedUserMessages);
-                return new ResponseEntity<Object>(result, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-            }
+            UserMessages savedUserMessages = usersMessagesService.saveUserMessage(userMessagesDto);
+            UserMessagesDto result = UserMessagesDto.fromUserMessages(savedUserMessages);
+            return new ResponseEntity<Object>(result, HttpStatus.OK);
 
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
@@ -121,7 +121,7 @@ public class UserMessagesRestController {
             String bearerName = authentication.getName();
             User bearerUser = userService.findByUsername(bearerName);
 
-            UserMessages userMessage= usersMessagesService.findMessageById(id);
+            UserMessages userMessage = usersMessagesService.findMessageById(id);
             if (userMessage != null) {
                 if (bearerUser.getId().equals(userMessage.getUser().getId())) {
                     userMessagesDto.setId(id);
@@ -141,21 +141,15 @@ public class UserMessagesRestController {
     }
 
     @PutMapping("/messages/{id}/status")
-    public ResponseEntity<Object> updateUserMessageStatus(@PathVariable("id") Long id, @RequestBody String status) {
+    public ResponseEntity<Object> updateUserMessageStatus(@PathVariable("id") Long id, @Valid @RequestBody UserMessagesDto userMessagesDto) {
         try {
             UserMessages userMessages = usersMessagesService.findMessageById(id);
 
-            boolean isEnum = false;
-            for (MessagesStatus e : MessagesStatus.values()) {
-                if (status.equals(e.toString())) {
-                    isEnum = true;
-                }
-            }
-            if (!isEnum) {
+            if (userMessagesDto.getMessageStatus()==null) {
                 return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
             }
             if (userMessages != null) {
-                UserMessages updatedUser = usersMessagesService.updateUserMessageStatus(MessagesStatus.valueOf(status), userMessages);
+                UserMessages updatedUser = usersMessagesService.updateUserMessageStatus(MessagesStatus.valueOf(userMessagesDto.getMessageStatus()), userMessages);
                 UserMessagesDto result = UserMessagesDto.fromUserMessages(updatedUser);
                 return new ResponseEntity<Object>(result, HttpStatus.OK);
             } else {

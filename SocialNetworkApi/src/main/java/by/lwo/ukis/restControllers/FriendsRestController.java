@@ -72,7 +72,7 @@ public class FriendsRestController {
     }
 
     @GetMapping(value = "/{friendId}/friends")
-    public ResponseEntity<Object> getFriendByUserFriendId(@PathVariable(name = "friendId") Long friendId,Authentication authentication) {
+    public ResponseEntity<Object> getFriendByUserFriendId(@PathVariable(name = "friendId") Long friendId, Authentication authentication) {
         try {
             Friends friends = friendsService.findFriendByUserAndFriendId(userService.findByUsername(authentication.getName()).getId(), friendId);
 
@@ -89,19 +89,20 @@ public class FriendsRestController {
     }
 
 
-    @PostMapping("/friends")
-    public ResponseEntity<Object> saveFriend(@Valid @RequestBody UserFriendDto userFriendDto, Authentication authentication) {
+    @PostMapping("/{friendId}/friends")
+    public ResponseEntity<Object> saveFriend(@PathVariable(name = "friendId") Long friendId, @Valid @RequestBody UserFriendDto userFriendDto, Authentication authentication) {
         try {
             String bearerName = authentication.getName();
             User user = userService.findByUsername(bearerName);
 
-            if (!user.getId().equals(userFriendDto.getUserId())) {
-                return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
+            if (userService.findById(friendId) == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-
+            userFriendDto.setFriendId(friendId);
+            userFriendDto.setUserId(user.getId());
             Friends userFriends = friendsService.findFriendByUserAndFriendId(user.getId(), userFriendDto.getFriendId());
 
-            if (userFriends==null) {
+            if (userFriends == null) {
                 Friends savedFriend = friendsService.saveFriend(userFriendDto);
                 UserFriendDto result = UserFriendDto.fromFriends(savedFriend);
                 return new ResponseEntity<Object>(result, HttpStatus.OK);
@@ -123,10 +124,10 @@ public class FriendsRestController {
             User friend = userService.findById(friendId);
             User bearerUser = userService.findByUsername(bearerName);
 
-            if(userFriendDto == null){
+            if (userFriendDto == null) {
                 return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
             }
-            if (friendsService.findFriendByUserAndFriendId(bearerUser.getId(), friendId)==null) {
+            if (friendsService.findFriendByUserAndFriendId(bearerUser.getId(), friendId) == null) {
                 return new ResponseEntity<Object>(HttpStatus.NOT_FOUND);
             }
 
@@ -144,6 +145,5 @@ public class FriendsRestController {
         }
     }
 }
-
 
 

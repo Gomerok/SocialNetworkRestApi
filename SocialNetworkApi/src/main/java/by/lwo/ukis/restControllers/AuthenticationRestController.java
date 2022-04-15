@@ -37,16 +37,15 @@ public class AuthenticationRestController {
         this.userService = userService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody AuthenticationDto requestDto) {
+    @PostMapping("login")
+    public ResponseEntity login(@RequestBody AuthenticationDto requestDto) {
         try {
             String username = requestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
             User user = userService.findByUsername(username);
 
             if (user == null) {
-                return new ResponseEntity<Object>("User with username: " + username + " not found",HttpStatus.NOT_FOUND) ;
-//                throw new UsernameNotFoundException("User with username: " + username + " not found");
+                throw new UsernameNotFoundException("User with username: " + username + " not found");
             }
 
             String token = jwtTokenProvider.createToken(username, user.getRoles());
@@ -57,8 +56,8 @@ public class AuthenticationRestController {
 
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
-            return new ResponseEntity<Object>("Invalid username or password",HttpStatus.NOT_FOUND) ;
-//            throw new BadCredentialsException("Invalid username or password");
+            throw new BadCredentialsException("Invalid username or password");
         }
     }
+
 }

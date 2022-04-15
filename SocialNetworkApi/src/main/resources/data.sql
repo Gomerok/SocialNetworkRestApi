@@ -3,14 +3,14 @@
 -- other user password 'user'
 
 -- ADMIN init
-INSERT INTO users (id, username, password, first_name, last_name, email, status)
+INSERT INTO users (id, username, password, first_name, last_name, email, status, created, updated)
 VALUES (1, 'admin', '$2a$04$w2cYM5Tuf8LFwW8Mc6c1m.f91tTxeup6oBNM3y06fn0C1sKr4H9J6', 'daniil', 'gomerov',
-        'gomerov@gmail.com', 'ACTIVE');
+        'gomerov@gmail.com', 'ACTIVE',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 
 -- USER init
-INSERT INTO users (id, username, password, first_name, last_name, email, status)
+INSERT INTO users (id, username, password, first_name, last_name, email, status, created, updated)
 VALUES (2, 'user', '$2a$04$.QUi82ez7KnCB76Ws/bE.uaG4S8489cTaexdKP2z5eZsmjWg./WhK', 'vasy', 'pupkin', 'pupkin@gmail.com',
-        'ACTIVE');
+        'ACTIVE', CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 
 -- Role init
 INSERT INTO roles(id, name)
@@ -72,6 +72,16 @@ VALUES (2, 2, 3, 'Im vasy', 'CREATED');
 INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
 VALUES (3, 3, 2, 'Hello vasy', 'CREATED');
 
+
+INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
+VALUES (4, 2, 3, 'Hello', 'CREATED');
+
+INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
+VALUES (5, 2, 3, 'Im vasy', 'CREATED');
+
+INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
+VALUES (6, 3, 2, 'Hello vasy', 'CREATED');
+
 --News
 INSERT INTO user_news (id, user_id, header, description, news_status)
 VALUES (1, 2, 'Title', 'Hello', 'CREATED');
@@ -81,4 +91,15 @@ VALUES (2, 2, 'Title2', 'Hello', 'CREATED');
 
 INSERT INTO user_news (id, user_id, header, description, news_status)
 VALUES (3, 2, 'Title3', 'Hello', 'CREATED');
+
+INSERT INTO user_news (id, user_id, header, description, news_status)
+VALUES (4, 3, 'Title1', 'Hello', 'CREATED');
+
+INSERT INTO user_news (id, user_id, header, description, news_status)
+VALUES (5, 3, 'Title2', 'Hello', 'CREATED');
+
+INSERT INTO user_news (id, user_id, header, description, news_status)
+VALUES (6, 3, 'Title3', 'Hello', 'CREATED');
+
+
 

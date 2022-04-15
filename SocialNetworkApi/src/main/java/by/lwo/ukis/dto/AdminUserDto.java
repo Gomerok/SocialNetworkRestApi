@@ -33,6 +33,7 @@ public class AdminUserDto {
     private Date created;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Date updated;
+    @Pattern(regexp = "^(ACTIVE|NOT_ACTIVE|DELETED)$", message = "Incorrect Status")
     private String status;
 
     public User toUser() {

@@ -3,8 +3,8 @@ package by.lwo.ukis.restControllers;
 import by.lwo.ukis.dto.AdminUserDto;
 import by.lwo.ukis.dto.UserDto;
 import by.lwo.ukis.dto.UserRegistrationDto;
-import by.lwo.ukis.model.enums.Status;
 import by.lwo.ukis.model.User;
+import by.lwo.ukis.model.enums.Status;
 import by.lwo.ukis.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -81,14 +81,14 @@ public class AdminRestController {
 
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto) {
-        try{
+        try {
             User findUser = userService.findByUsername(userRegistrationDto.getUsername());
             if (findUser == null) {
                 User savedUser = userService.register(userRegistrationDto);
                 UserDto result = UserDto.fromUser(savedUser);
                 return new ResponseEntity<Object>(result, HttpStatus.OK);
             } else {
-                return new ResponseEntity<Object>("User with username: "+userRegistrationDto.getUsername()+"exist",HttpStatus.FOUND);
+                return new ResponseEntity<Object>("User with username: " + userRegistrationDto.getUsername() + "exist", HttpStatus.FOUND);
             }
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
@@ -97,14 +97,14 @@ public class AdminRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable("id") Long id,@Valid @RequestBody UserDto userDto, Authentication authentication) {
+    public ResponseEntity<Object> updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserDto userDto, Authentication authentication) {
         try {
             User user = userService.findById(id);
 
-            if(userDto.getUsername().equals(user.getUsername())){
-                return new ResponseEntity<Object>("User with username: "+user.getUsername()+" exist", HttpStatus.FOUND);
-            }
             if (user != null) {
+                if (userDto.getUsername().equals(user.getUsername())) {
+                    return new ResponseEntity<Object>("User with username: " + user.getUsername() + " exist", HttpStatus.FOUND);
+                }
                 userDto.setId(user.getId());
                 User updatedUser = userService.update(userDto);
                 AdminUserDto result = AdminUserDto.fromUser(updatedUser);
@@ -136,22 +136,12 @@ public class AdminRestController {
     }
 
     @PutMapping("/users/{id}/status")
-    public ResponseEntity<Object> updateUserStatus(@PathVariable("id") Long id, @RequestBody String status) {
+    public ResponseEntity<Object> updateUserStatus(@PathVariable("id") Long id, @Valid @RequestBody AdminUserDto adminUserDto) {
         try {
             User user = userService.findById(id);
 
-            boolean isEnum = false;
-            for (Status e : Status.values()) {
-                if (status.equals(e.toString())) {
-                    isEnum = true;
-                }
-            }
-            if (!isEnum) {
-                return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-            }
-
             if (user != null) {
-                User updatedUser = userService.updateStatus(Status.valueOf(status), user);
+                User updatedUser = userService.updateStatus(Status.valueOf(adminUserDto.getStatus()), user);
                 AdminUserDto result = AdminUserDto.fromUser(updatedUser);
                 return new ResponseEntity<Object>(result, HttpStatus.OK);
             } else {

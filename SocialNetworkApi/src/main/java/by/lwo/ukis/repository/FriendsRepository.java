@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import by.lwo.ukis.model.enums.FriendsStatus;
 
 import java.util.List;
 
@@ -15,7 +14,6 @@ public interface FriendsRepository extends JpaRepository<Friends, Long> {
     @Query("SELECT f FROM Friends f WHERE f.friendId=: userId or f.user.id=:userId ")
     List<Friends> getAllFriendsByUserId(@Param("userId") Long userId);
 
-    @Query("SELECT f FROM Friends f WHERE ((f.friendId=: userId and f.user.id=:friendId) or (f.friendId=: friendId and f.user.id=:userId))" +
-            "and f.friendsStatus <> by.lwo.ukis.model.enums.FriendsStatus.DELETED ")
+    @Query("SELECT f FROM Friends f WHERE ((f.friendId=: userId and f.user.id=:friendId) or (f.friendId=: friendId and f.user.id=:userId))")
     Friends getFriendsByUserAndFriendId(@Param("userId") Long userId, @Param("friendId") Long friendId);
 }

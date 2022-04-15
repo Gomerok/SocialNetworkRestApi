@@ -84,12 +84,17 @@ public class UserNewsRestController {
     }
 
 
-    @PostMapping("/news")
-    public ResponseEntity<Object> saveUserNews(@RequestBody UserNewsDto userNewsDto, Authentication authentication) {
+    @PostMapping("/{userId}/news")
+    public ResponseEntity<Object> saveUserNews(@PathVariable(name = "userId") Long userId,
+                                               @Valid @RequestBody UserNewsDto userNewsDto, Authentication authentication) {
         try {
             String bearerName = authentication.getName();
             User bearer = userService.findByUsername(bearerName);
             userNewsDto.setUserId(bearer.getId());
+
+            if (!bearer.getId().equals(userId)) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
 
             UserNews savedUserNews = userNewsService.saveUserNews(userNewsDto);
             UserNewsDto result = UserNewsDto.fromUserNews(savedUserNews);
@@ -101,10 +106,15 @@ public class UserNewsRestController {
     }
 
     @PutMapping("/news/{id}")
-    public ResponseEntity<Object> updateUserNews(@PathVariable("id") Long id, @Valid @RequestBody UserNewsDto userNewsDto, Authentication authentication) {
+    public ResponseEntity<Object> updateUserNews(@PathVariable(name = "id") Long id,
+                                                 @Valid @RequestBody UserNewsDto userNewsDto, Authentication authentication) {
         try {
             String bearerName = authentication.getName();
-            User bearerUser = userService.findByUsername(bearerName);
+            User bearer = userService.findByUsername(bearerName);
+
+            if (!bearer.getId().equals(userNewsDto.getUserId())) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
 
             UserNews userNews = userNewsService.findUserNewsById(id);
             if (userNews != null) {
@@ -121,11 +131,11 @@ public class UserNewsRestController {
         }
     }
 
-    @PutMapping("/news/{id}/status/")
-    public ResponseEntity<Object> updateUserMessageStatus(@PathVariable("id") Long id,@Valid @RequestBody UserNewsDto userNewsDto) {
+    @PutMapping("/news/{id}/status")
+    public ResponseEntity<Object> updateUserMessageStatus(@PathVariable("id") Long id, @Valid @RequestBody UserNewsDto userNewsDto) {
         try {
             UserNews userNews = userNewsService.findUserNewsById(id);
-
+            System.out.println(userNews);
             if (userNews != null) {
                 UserNews updatedUserNews = userNewsService.updateUserNewsStatus(NewsStatus.valueOf(userNewsDto.getNewsStatus()), userNews);
                 UserNewsDto result = UserNewsDto.fromUserNews(updatedUserNews);

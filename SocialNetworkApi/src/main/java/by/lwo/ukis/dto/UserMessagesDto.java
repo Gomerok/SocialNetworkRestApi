@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 
@@ -18,7 +20,7 @@ public class UserMessagesDto {
     private Long id;
     private Long recipientId;
     private Long senderId;
-    @Pattern(regexp = "^[a-zA-Z0-9,.()!?]{3,500}$", message = "Incorrect value")
+    @Pattern(regexp = "^[a-zA-Z0-9,.()!? ]{3,500}$", message = "Incorrect value")
     private String value;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Date created;
