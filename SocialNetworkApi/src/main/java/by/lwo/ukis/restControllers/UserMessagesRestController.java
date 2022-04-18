@@ -37,26 +37,22 @@ public class UserMessagesRestController {
     }
 
     @GetMapping(value = "/{recipientId}/messages")
-    public ResponseEntity<Object> getAllMessagesBySenderAndRecipientId(@PathVariable(name = "recipientId") String recipientId,
-                                                                       @RequestParam(name = "pageNo", required = false, defaultValue = "0") String pageNo,
-                                                                       @RequestParam(name = "pageSize", required = false, defaultValue = "2") String pageSize,
+    public ResponseEntity<Object> getAllMessagesBySenderAndRecipientId(@PathVariable(name = "recipientId") Long recipientId,
+                                                                       @RequestParam(name = "pageNo", required = false, defaultValue = "0") Integer pageNo,
+                                                                       @RequestParam(name = "pageSize", required = false, defaultValue = "2") Integer pageSize,
                                                                        Authentication authentication) {
         try {
-
             String senderName = authentication.getName();
-            User recipient = userService.findById(Long.parseLong(recipientId));
+            User recipient = userService.findById(recipientId);
             User sender = userService.findByUsername(senderName);
-
-            if (!NumberUtils.isNumber(recipientId) || !NumberUtils.isNumber(pageNo) || !NumberUtils.isNumber(pageSize)) {
-                return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-            }
 
             if (recipient == null) {
                 return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
             }
 
-            Pageable pageable = PageRequest.of(Integer.parseInt(pageNo), Integer.parseInt(pageSize));
-            Page<UserMessages> userMessagesPage = usersMessagesService.findAllMessagesBySenderAndRecipientId(sender.getId(), recipient.getId(), pageable);
+            Pageable pageable = PageRequest.of(pageNo, pageSize);
+            Page<UserMessages> userMessagesPage = usersMessagesService.
+                    findAllMessagesBySenderAndRecipientId(sender.getId(), recipient.getId(), pageable);
 
             int totalElements = (int) userMessagesPage.getTotalElements();
             Page<UserMessagesDto> userMessagesDtoPage = new PageImpl<UserMessagesDto>(userMessagesPage.getContent()

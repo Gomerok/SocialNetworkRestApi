@@ -54,13 +54,10 @@ public class UserRestController {
 
     @GetMapping("/")
     public ResponseEntity<Object> getAllUsersSearchParamPagination(@RequestParam(name = "param", required = false, defaultValue = "") String param,
-                                                                   @RequestParam(name = "pageNo", required = false, defaultValue = "0") String pageNo,
-                                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "2") String pageSize) {
+                                                                   @RequestParam(name = "pageNo", required = false, defaultValue = "0") Integer pageNo,
+                                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "2") Integer pageSize) {
         try {
-            if (!NumberUtils.isNumber(pageNo) || !NumberUtils.isNumber(pageSize)) {
-                return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-            }
-            Pageable pageable = PageRequest.of(Integer.parseInt(pageNo), Integer.parseInt(pageSize));
+            Pageable pageable = PageRequest.of(pageNo, pageSize);
             Page<User> userPage = userService.findAllUserWithSearchParamPagination(param, pageable);
 
             int totalElements = (int) userPage.getTotalElements();

@@ -21,21 +21,15 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/v1/users")
 public class ImageLoadUploadRestController {
 
-    private final UserRepository userRepository;
-    private final ImageRepository imageRepository;
+    private final ImageService imageService;
+    private final UserService userService;
 
-    @Autowired
-    ImageService imageService;
-
-    @Autowired
-    UserService userService;
-
-    private static final String DIR_TO_UPLOAD = "D:\\";
-
-    public ImageLoadUploadRestController(UserRepository userRepository, ImageRepository imageRepository) {
-        this.userRepository = userRepository;
-        this.imageRepository = imageRepository;
+   @Autowired
+    public ImageLoadUploadRestController(ImageService imageService, UserService userService) {
+        this.imageService = imageService;
+        this.userService = userService;
     }
+
 
     @PostMapping(value = "/image", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<Object> uploadImage(@RequestParam MultipartFile multipartImage,

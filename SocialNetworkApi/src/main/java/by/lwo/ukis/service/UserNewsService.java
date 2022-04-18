@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 public interface UserNewsService {
     Page<UserNews> findAllNews(Pageable pageable);
 
+    Page<UserNews> findAllNewsByUserId(Long userId, Pageable pageable);
+
     UserNews saveUserNews(UserNewsDto userNewsDto);
 
     UserNews findUserNewsById(Long id);

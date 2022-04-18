@@ -18,4 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long>, PagingAndSort
     @Query("SELECT u FROM User as u WHERE u.firstName LIKE %:param% or u.lastName LIKE %:param% ORDER BY u.id")
     Page<User> findAllWhitSearchParamPagination(@Param("param") String param, Pageable pageable);
 
+//    @Query("SELECT u FROM User u, Friends f WHERE (u.id=f.friendId OR u.id=f.user.id) AND u.id=:userId")
+    @Query("SELECT DISTINCT u FROM User u  Inner JOIN u.friends f1 ON f1.user.id = u.id And u.id <>:userId ")
+    Page<User> getAllFriendsByUserId(@Param("userId") Long userId, Pageable pageable);
+
 }

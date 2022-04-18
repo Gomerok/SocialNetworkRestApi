@@ -17,13 +17,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class UserNewsImpl implements UserNewsService {
+public class UserNewsServiceImpl implements UserNewsService {
 
     private final UserService userService;
     private final UserNewsRepository userNewsRepository;
 
     @Autowired
-    public UserNewsImpl(UserNewsRepository userNewsRepository, UserService userService) {
+    public UserNewsServiceImpl(UserNewsRepository userNewsRepository, UserService userService) {
         this.userNewsRepository = userNewsRepository;
         this.userService = userService;
     }
@@ -32,6 +32,13 @@ public class UserNewsImpl implements UserNewsService {
     public Page<UserNews> findAllNews(Pageable pageable) {
         Page<UserNews> result = userNewsRepository.findAll(pageable);
         log.info("IN findAllNews - found {} page", result.getTotalElements());
+        return result;
+    }
+
+    @Override
+    public Page<UserNews> findAllNewsByUserId(Long userId, Pageable pageable) {
+        Page<UserNews> result = userNewsRepository.findAllNewsByUserId(userId, pageable);
+        log.info("IN findAllNewsByUserId - found {} page", result.getTotalElements());
         return result;
     }
 
