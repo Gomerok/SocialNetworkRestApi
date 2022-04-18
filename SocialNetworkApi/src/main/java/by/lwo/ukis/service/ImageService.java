@@ -12,6 +12,6 @@ public interface ImageService {
 
     UserImages getImageById(Long id);
 
-    void deleteImage(UserImages image);
+    void deleteImage(UserImages image, User bearer);
 
 }

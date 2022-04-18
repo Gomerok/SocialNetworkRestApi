@@ -13,12 +13,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -107,7 +109,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> findAllUserWithSearchParamPagination(String param, Pageable pageable) {
-        Page<User> result = userRepository.findAllWhitSearchParamPagination(param ,pageable);
+        Page<User> result = userRepository.findAllWhitSearchParamPagination(param, pageable);
         log.info("IN findAllUserWithSearchParamPagination - found {} users with search param {}", result.getTotalElements(), param);
         return result;
     }

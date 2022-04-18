@@ -1,10 +1,7 @@
 package by.lwo.ukis.service.impl;
 
-import by.lwo.ukis.dto.UserMessagesDto;
 import by.lwo.ukis.dto.UserNewsDto;
-import by.lwo.ukis.model.UserMessages;
 import by.lwo.ukis.model.UserNews;
-import by.lwo.ukis.model.enums.MessagesStatus;
 import by.lwo.ukis.model.enums.NewsStatus;
 import by.lwo.ukis.repository.UserNewsRepository;
 import by.lwo.ukis.service.UserNewsService;
@@ -14,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@Transactional
 public class UserNewsServiceImpl implements UserNewsService {
 
     private final UserService userService;

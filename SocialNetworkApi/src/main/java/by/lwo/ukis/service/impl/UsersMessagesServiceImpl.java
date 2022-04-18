@@ -1,10 +1,8 @@
 package by.lwo.ukis.service.impl;
 
 import by.lwo.ukis.dto.UserMessagesDto;
-import by.lwo.ukis.model.User;
 import by.lwo.ukis.model.UserMessages;
 import by.lwo.ukis.model.enums.MessagesStatus;
-import by.lwo.ukis.model.enums.Status;
 import by.lwo.ukis.repository.UsersMessagesRepository;
 import by.lwo.ukis.service.UserService;
 import by.lwo.ukis.service.UsersMessagesService;
@@ -13,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@Transactional
 public class UsersMessagesServiceImpl implements UsersMessagesService {
 
     private final UsersMessagesRepository usersMessagesRepository;

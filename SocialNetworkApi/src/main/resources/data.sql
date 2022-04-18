@@ -63,7 +63,11 @@ INSERT INTO friends (id, user_id, friend_id, friend_status, status)
 VALUES (3, 4, 2, 'FRIEND', 'ACTIVE');
 
 INSERT INTO friends (id, user_id, friend_id, friend_status, status)
-VALUES (4, 2, 4, 'FRIEND', 'ACTIVE');
+VALUES (4, 4, 3, 'FRIEND', 'ACTIVE');
+
+INSERT INTO friends (id, user_id, friend_id, friend_status, status)
+VALUES (5, 4, 5, 'FRIEND', 'ACTIVE');
+
 --Messages
 INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
 VALUES (1, 2, 3, 'Hello', 'CREATED');

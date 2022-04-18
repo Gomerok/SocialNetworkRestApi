@@ -2,9 +2,8 @@ package by.lwo.ukis.service;
 
 import by.lwo.ukis.dto.UserDto;
 import by.lwo.ukis.dto.UserRegistrationDto;
-import by.lwo.ukis.model.UserMessages;
-import by.lwo.ukis.model.enums.Status;
 import by.lwo.ukis.model.User;
+import by.lwo.ukis.model.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

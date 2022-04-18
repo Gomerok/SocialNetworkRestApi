@@ -8,18 +8,13 @@ import by.lwo.ukis.model.enums.FriendsStatus;
 import by.lwo.ukis.service.FriendsService;
 import by.lwo.ukis.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -150,21 +145,36 @@ public class FriendsRestController {
 //    }
 
 
+//    @GetMapping("/{userId}/friends")
+//    public ResponseEntity<Object> getAllFriends(@PathVariable(name = "userId") Long userId,
+//                                                @RequestParam(name = "pageNo", required = false, defaultValue = "0") Integer pageNo,
+//                                                @RequestParam(name = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
+//        try {
+//            Pageable pageable = PageRequest.of(pageNo,pageSize);
+//            Page<User> userFriends = friendsService.findAllFriendsByUserId(userId, pageable);
+//
+//            if (userFriends.isEmpty()) {
+//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//            }
+//            List<UserDto> result = new ArrayList<>();
+//
+//            for (User user : userFriends) {
+//                result.add(UserDto.fromUser(user));
+//            }
+//            return new ResponseEntity<Object>(result, HttpStatus.OK);
+//        } catch (Exception ex) {
+//            log.error(ex.getMessage(), ex);
+//            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+//        }
+//    }
+
     @GetMapping("/{userId}/friends")
-    public ResponseEntity<Object> getAllFriends(@PathVariable(name = "userId") Long userId,
-                                                @RequestParam(name = "pageNo", required = false, defaultValue = "0") Integer pageNo,
-                                                @RequestParam(name = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
+    public ResponseEntity<Object> getAllFriends(@PathVariable(name = "userId") Long userId) {
         try {
-            Pageable pageable = PageRequest.of(pageNo,pageSize);
-            Page<User> userFriends = friendsService.findAllFriendsByUserId(userId, pageable);
+            List<UserDto> result = friendsService.findAllFriendsByUserId(userId);
 
-            if (userFriends.isEmpty()) {
+            if (result.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            List<UserDto> result = new ArrayList<>();
-
-            for (User user : userFriends) {
-                result.add(UserDto.fromUser(user));
             }
             return new ResponseEntity<Object>(result, HttpStatus.OK);
         } catch (Exception ex) {
@@ -195,15 +205,14 @@ public class FriendsRestController {
                                              @Valid @RequestBody UserFriendDto userFriendDto,
                                              Authentication authentication) {
         try {
-            String bearerName = authentication.getName();
-            User user = userService.findByUsername(bearerName);
+            User bearerUser = userService.findByUsername(authentication.getName());
 
             if (userService.findById(friendId) == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             userFriendDto.setFriendId(friendId);
-            userFriendDto.setUserId(user.getId());
-            Friends userFriends = friendsService.findFriendByUserAndFriendId(user.getId(), userFriendDto.getFriendId());
+            userFriendDto.setUserId(bearerUser.getId());
+            Friends userFriends = friendsService.findFriendByUserAndFriendId(bearerUser.getId(), userFriendDto.getFriendId());
 
             if (userFriends == null) {
                 Friends savedFriend = friendsService.saveFriend(userFriendDto);
@@ -224,9 +233,8 @@ public class FriendsRestController {
                                                          @Valid @RequestBody UserFriendDto userFriendDto,
                                                          Authentication authentication) {
         try {
-            String bearerName = authentication.getName();
             User friend = userService.findById(friendId);
-            User bearerUser = userService.findByUsername(bearerName);
+            User bearerUser = userService.findByUsername(authentication.getName());
 
             if (userFriendDto == null) {
                 return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);

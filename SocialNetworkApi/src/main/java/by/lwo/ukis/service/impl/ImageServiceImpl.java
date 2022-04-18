@@ -2,18 +2,19 @@ package by.lwo.ukis.service.impl;
 
 import by.lwo.ukis.model.User;
 import by.lwo.ukis.model.UserImages;
-import by.lwo.ukis.model.UserNews;
 import by.lwo.ukis.repository.ImageRepository;
 import by.lwo.ukis.repository.UserRepository;
 import by.lwo.ukis.service.ImageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @Slf4j
 @Service
+@Transactional
 public class ImageServiceImpl implements ImageService {
 
     private final UserRepository userRepository;
@@ -28,7 +29,7 @@ public class ImageServiceImpl implements ImageService {
     public UserImages saveImage(MultipartFile multipartFile, User user) throws IOException {
 
         UserImages savedImage = new UserImages();
-        savedImage.setName(multipartFile.getName());
+        savedImage.setName(multipartFile.getOriginalFilename());
         savedImage.setContent(multipartFile.getBytes());
         savedImage.setUser(user);
 
@@ -50,8 +51,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void deleteImage(UserImages image) {
-        imageRepository.delete(image);
+    public void deleteImage(UserImages image, User bearer) {
+        imageRepository.deleteImage(image.getId());
         log.info("IN deleteImage - image with id: {} successfully deleted", image.getId());
     }
 

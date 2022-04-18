@@ -35,8 +35,7 @@ public class ImageLoadUploadRestController {
     public ResponseEntity<Object> uploadImage(@RequestParam MultipartFile multipartImage,
                                               Authentication authentication) throws Exception {
         try {
-            String bearerName = authentication.getName();
-            User bearer = userService.findByUsername(bearerName);
+            User bearer = userService.findByUsername(authentication.getName());
 
             UserImages image = imageService.saveImage(multipartImage, bearer);
             return new ResponseEntity<Object>(HttpStatus.OK);
@@ -66,11 +65,18 @@ public class ImageLoadUploadRestController {
     }
 
     @DeleteMapping("/image/{id}")
-    public ResponseEntity<HttpStatus> deleteUserImage(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> deleteUserImage(@PathVariable("id") Long id,
+                                                      Authentication authentication) {
         try {
             UserImages image = imageService.getImageById(id);
+            User bearer = userService.findByUsername(authentication.getName());
+            boolean flag = false;
+            flag = bearer.getImage().stream().anyMatch(images -> images.getId().equals(id));
+            if(!flag){
+                return new ResponseEntity<HttpStatus>(HttpStatus.FORBIDDEN);
+            }
             if (image != null) {
-                imageService.deleteImage(image);
+                imageService.deleteImage(image, bearer);
                 return new ResponseEntity<HttpStatus>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);

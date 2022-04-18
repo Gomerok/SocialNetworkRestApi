@@ -1,11 +1,10 @@
 package by.lwo.ukis.service;
 
+import by.lwo.ukis.dto.UserDto;
 import by.lwo.ukis.dto.UserFriendDto;
 import by.lwo.ukis.model.Friends;
-import by.lwo.ukis.model.enums.FriendsStatus;
 import by.lwo.ukis.model.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import by.lwo.ukis.model.enums.FriendsStatus;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ public interface FriendsService {
 //
 //    Friends findFriendById(Long id);
 
-    Page<User> findAllFriendsByUserId(Long userId, Pageable pageable);
+    List<UserDto> findAllFriendsByUserId(Long userId);
 
     Friends findFriendByUserAndFriendId(Long userId, Long friendId);
 

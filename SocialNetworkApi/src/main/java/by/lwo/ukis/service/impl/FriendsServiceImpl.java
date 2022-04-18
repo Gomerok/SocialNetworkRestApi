@@ -1,7 +1,9 @@
 package by.lwo.ukis.service.impl;
 
+import by.lwo.ukis.dto.UserDto;
 import by.lwo.ukis.dto.UserFriendDto;
-import by.lwo.ukis.model.*;
+import by.lwo.ukis.model.Friends;
+import by.lwo.ukis.model.User;
 import by.lwo.ukis.model.enums.FriendsStatus;
 import by.lwo.ukis.repository.FriendsRepository;
 import by.lwo.ukis.repository.UserRepository;
@@ -9,14 +11,15 @@ import by.lwo.ukis.service.FriendsService;
 import by.lwo.ukis.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
+@Transactional
 public class FriendsServiceImpl implements FriendsService {
 
     private final UserService userService;
@@ -80,10 +83,21 @@ public class FriendsServiceImpl implements FriendsService {
 //    }
 
     @Override
-    public Page<User> findAllFriendsByUserId(Long userId, Pageable pageable) {
-        Page<User> result = userRepository.getAllFriendsByUserId(userId , pageable);
-        log.info("IN getAllFriends - {} users friends found", result.getTotalElements());
-        return result;
+    public List<UserDto> findAllFriendsByUserId(Long userId) {
+        List<Object[]> list = userRepository.getAllFriendsByUserId(userId);
+        List<UserDto> results = new ArrayList<>();
+
+        for (Object user: list){
+            Object[] row = (Object[]) user;
+            UserDto userDto = new UserDto();
+            userDto.setId(Long.valueOf(row[0].toString()));
+            userDto.setUsername(row[1].toString());
+            userDto.setFirstName(row[2].toString());
+            userDto.setLastName(row[3].toString());
+            userDto.setEmail(row[4].toString());
+            results.add(userDto);
+        }
+        return  results;
     }
 
     @Override

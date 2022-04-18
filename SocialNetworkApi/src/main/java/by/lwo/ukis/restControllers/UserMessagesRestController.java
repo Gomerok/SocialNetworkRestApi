@@ -42,9 +42,8 @@ public class UserMessagesRestController {
                                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "2") Integer pageSize,
                                                                        Authentication authentication) {
         try {
-            String senderName = authentication.getName();
             User recipient = userService.findById(recipientId);
-            User sender = userService.findByUsername(senderName);
+            User sender = userService.findByUsername(authentication.getName());
 
             if (recipient == null) {
                 return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
@@ -91,13 +90,13 @@ public class UserMessagesRestController {
 
     @PostMapping("/{recipientId}/messages")
     public ResponseEntity<Object> saveUserMessages(@PathVariable(name = "recipientId") Long recipientId,
-                                                   @Valid @RequestBody UserMessagesDto userMessagesDto, Authentication authentication) {
+                                                   @Valid @RequestBody UserMessagesDto userMessagesDto,
+                                                   Authentication authentication) {
         try {
             if (userService.findById(recipientId) == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            String senderName = authentication.getName();
-            User sender = userService.findByUsername(senderName);
+            User sender = userService.findByUsername(authentication.getName());
             userMessagesDto.setSenderId(sender.getId());
             userMessagesDto.setRecipientId(recipientId);
 
@@ -112,14 +111,15 @@ public class UserMessagesRestController {
     }
 
     @PutMapping("/messages/{id}")
-    public ResponseEntity<Object> updateUserMessage(@PathVariable("id") Long id, @RequestBody UserMessagesDto userMessagesDto, Authentication authentication) {
+    public ResponseEntity<Object> updateUserMessage(@PathVariable("id") Long id,
+                                                    @RequestBody UserMessagesDto userMessagesDto,
+                                                    Authentication authentication) {
         try {
-            String bearerName = authentication.getName();
-            User bearerUser = userService.findByUsername(bearerName);
+            User bearer = userService.findByUsername(authentication.getName());
 
             UserMessages userMessage = usersMessagesService.findMessageById(id);
             if (userMessage != null) {
-                if (bearerUser.getId().equals(userMessage.getUser().getId())) {
+                if (bearer.getId().equals(userMessage.getUser().getId())) {
                     userMessagesDto.setId(id);
                     UserMessages updatedUserMessage = usersMessagesService.updateUserMessage(userMessagesDto);
                     UserMessagesDto result = UserMessagesDto.fromUserMessages(updatedUserMessage);
@@ -137,7 +137,8 @@ public class UserMessagesRestController {
     }
 
     @PutMapping("/messages/{id}/status")
-    public ResponseEntity<Object> updateUserMessageStatus(@PathVariable("id") Long id, @Valid @RequestBody UserMessagesDto userMessagesDto) {
+    public ResponseEntity<Object> updateUserMessageStatus(@PathVariable("id") Long id,
+                                                          @Valid @RequestBody UserMessagesDto userMessagesDto) {
         try {
             UserMessages userMessages = usersMessagesService.findMessageById(id);
 

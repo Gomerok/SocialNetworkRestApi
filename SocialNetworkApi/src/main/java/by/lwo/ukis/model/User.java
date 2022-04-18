@@ -35,7 +35,7 @@ public class User extends BaseEntity {
     private List<UserNews> news;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserNews> image;
+    private List<UserImages> image;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
