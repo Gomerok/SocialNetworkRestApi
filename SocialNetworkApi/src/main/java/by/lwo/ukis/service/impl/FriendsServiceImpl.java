@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -83,20 +84,20 @@ public class FriendsServiceImpl implements FriendsService {
 //    }
 
     @Override
-    public List<UserDto> findAllFriendsByUserId(Long userId) {
-        List<Object[]> list = userRepository.getAllFriendsByUserId(userId);
-        List<UserDto> results = new ArrayList<>();
+    public List<UserDto> findAllFriendsByUserId(Long userId, String friendStatus) {
+        List<Object[]> list = userRepository.getAllFriendsByUserId(userId, friendStatus);
 
-        for (Object user: list){
-            Object[] row = (Object[]) user;
+        List<UserDto> results = list.stream().map(row -> {
             UserDto userDto = new UserDto();
             userDto.setId(Long.valueOf(row[0].toString()));
             userDto.setUsername(row[1].toString());
             userDto.setFirstName(row[2].toString());
             userDto.setLastName(row[3].toString());
             userDto.setEmail(row[4].toString());
-            results.add(userDto);
-        }
+            return userDto;
+        }).collect(Collectors.toList());
+
+        log.info("IN findAllFriendsByUserId - {} friend found", results.size());
         return  results;
     }
 

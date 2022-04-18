@@ -36,7 +36,7 @@ public class UserNewsServiceImpl implements UserNewsService {
 
     @Override
     public Page<UserNews> findAllNewsByUserId(Long userId, Pageable pageable) {
-        Page<UserNews> result = userNewsRepository.findAllNewsByUserId(userId, pageable);
+        Page<UserNews> result = userNewsRepository.findAllNewsByUserId(userId, pageable, NewsStatus.CREATED);
         log.info("IN findAllNewsByUserId - found {} page", result.getTotalElements());
         return result;
     }
@@ -87,9 +87,10 @@ public class UserNewsServiceImpl implements UserNewsService {
 
     @Override
     public void deleteUserNews(UserNews userNews) {
-        userNews.setNewsStatus(NewsStatus.DELETED);
-        UserNews result = userNewsRepository.save(userNews);
-        log.info("IN deleteUserNews - news with id: {} successfully deleted", result.getId());
+//        userNews.setNewsStatus(NewsStatus.DELETED);
+//        UserNews result = userNewsRepository.save(userNews);
+        userNewsRepository.deleteNews(userNews.getId());
+        log.info("IN deleteUserNews - news with id: {} successfully deleted", userNews.getId());
     }
 
 }

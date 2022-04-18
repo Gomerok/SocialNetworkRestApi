@@ -82,9 +82,9 @@ public class UsersMessagesServiceImpl implements UsersMessagesService {
 
     @Override
     public void deleteUserMessage(UserMessages userMessage) {
-        userMessage.setMessagesStatus(MessagesStatus.DELETED);
-        UserMessages result = usersMessagesRepository.save(userMessage);
-        log.info("IN deleteUserMessage - message with id: {} successfully deleted", result.getId());
+//        userMessage.setMessagesStatus(MessagesStatus.DELETED);
+//        UserMessages result = usersMessagesRepository.save(userMessage);
+        usersMessagesRepository.deleteMessage(userMessage.getId());
+        log.info("IN deleteUserMessage - message with id: {} successfully deleted", userMessage.getId());
     }
-
 }

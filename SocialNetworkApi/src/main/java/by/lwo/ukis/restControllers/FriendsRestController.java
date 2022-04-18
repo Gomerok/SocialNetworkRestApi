@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Slf4j
@@ -169,9 +170,10 @@ public class FriendsRestController {
 //    }
 
     @GetMapping("/{userId}/friends")
-    public ResponseEntity<Object> getAllFriends(@PathVariable(name = "userId") Long userId) {
+    public ResponseEntity<Object> getAllFriends(@PathVariable(name = "userId") Long userId,
+                                                @RequestParam(name = "friendStatus", defaultValue = "FRIEND") String friendStatus) {
         try {
-            List<UserDto> result = friendsService.findAllFriendsByUserId(userId);
+            List<UserDto> result = friendsService.findAllFriendsByUserId(userId, friendStatus);
 
             if (result.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

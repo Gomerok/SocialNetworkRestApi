@@ -5,6 +5,7 @@ import by.lwo.ukis.dto.UserFriendDto;
 import by.lwo.ukis.model.Friends;
 import by.lwo.ukis.model.User;
 import by.lwo.ukis.model.enums.FriendsStatus;
+import by.lwo.ukis.model.enums.Status;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface FriendsService {
 //
 //    Friends findFriendById(Long id);
 
-    List<UserDto> findAllFriendsByUserId(Long userId);
+    List<UserDto> findAllFriendsByUserId(Long userId, String friendStatus);
 
     Friends findFriendByUserAndFriendId(Long userId, Long friendId);
 
