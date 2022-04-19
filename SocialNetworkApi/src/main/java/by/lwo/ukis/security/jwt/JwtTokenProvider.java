@@ -79,17 +79,26 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+//    public boolean validateToken(String token) {
+//        try {
+//            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+//
+//            if (claims.getBody().getExpiration().before(new Date())) {
+//                return false;
+//            }
+//            return true;
+//        } catch (JwtException | IllegalArgumentException e) {
+//            throw new JwtAuthenticationException("JWT token is expired or invalid");
+//        }
+//    }
 
-            if (claims.getBody().getExpiration().before(new Date())) {
-                return false;
-            }
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is expired or invalid");
+    public boolean validateToken(String token)throws JwtException{
+        Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+
+        if (claims.getBody().getExpiration().before(new Date())) {
+            return false;
         }
+        return true;
     }
 
     private List<String> getRoleNames(List<Role> userRoles) {

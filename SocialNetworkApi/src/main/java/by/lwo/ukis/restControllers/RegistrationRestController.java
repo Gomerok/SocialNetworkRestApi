@@ -36,7 +36,7 @@ public class RegistrationRestController {
                 UserDto result = UserDto.fromUser(savedUser);
                 return new ResponseEntity<Object>(result, HttpStatus.OK);
             } else {
-                return new ResponseEntity<Object>("User with username: "+userRegistrationDto.getUsername()+"exist",HttpStatus.FOUND);
+                return new ResponseEntity<Object>("User with username: "+userRegistrationDto.getUsername()+" exist",HttpStatus.FOUND);
             }
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
