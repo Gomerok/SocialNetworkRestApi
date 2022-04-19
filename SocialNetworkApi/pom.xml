@@ -78,6 +78,20 @@
             <version>3.4</version>
         </dependency>
 
+<!--        Swagger-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.5.12</version>
+        </dependency>
+
+<!--        version conflict-->
+        <!--        <dependency>-->
+        <!--            <artifactId>springfox-boot-starter</artifactId>-->
+        <!--            <version>3.0.0</version>-->
+        <!--            <groupId>io.springfox</groupId>-->
+        <!--        </dependency>-->
+
     </dependencies>
 
     <build>
@@ -85,6 +99,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${project.parent.version}</version>
             </plugin>
         </plugins>
     </build>
