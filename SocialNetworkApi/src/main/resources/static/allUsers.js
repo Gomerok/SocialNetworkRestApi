@@ -1,29 +1,38 @@
-$(document).ready(function() {
+$(document).ready(function () {
     $.ajax({
         type: "GET",
-        url: "http://localhost:8080/api/v1/users/?pageSize=10",
+        url: "http://localhost:8080/api/v1/users/",
         headers: {
-            Authorization: 'Beare_'+ $.cookie('token')
+            Authorization: 'Bearer_' + $.cookie('token')
+            // Authorization: 'Bearer_eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY1MDk2MDgxMCwiZXhwIjoxNjUwOTYyNjEwfQ.aUEM7LdSrPb-N-xtrRJK5BenuLYmGqIJIwvq1V28V2s'
         },
-        dataType: 'json'
-    }).then(function(data) {
-        // // $('.greeting-id').append(data[1].id);
-        // // $('.greeting-content').append(data[1].username);
-        //
-        // for (var i = 0; i < data.length; i++){
-        //     var id = data[i].id;
-        //     var name = data[i].username;
-        // };
+        dataType: 'json',
 
 
-
-        $.each(data, function (key, value) {
-            $('#users').append("<tr>\
-										<td>"+value.id+"</td>\
-										<td>"+value.username+"</td>\
-										<td>"+value.email+"</td>\
+        success: function (response) {
+            $.each(response, function (key, value) {
+                $('#users').append("<tr>\
+										<td>" + value.id + "</td>\
+										<td>" + value.username + "</td>\
+										<td>" + value.email + "</td>\
 										</tr>");
-        })
+            })
+        },
+        error: function(httpObj, textStatus) {
+            console.log(httpObj.status);
+            // var err = JSON.parse(xhr.responseText);
+            //
+            // $("#message").html(err.message);
+
+            // request.error(function(httpObj, textStatus) {
+            //     if(httpObj.status==200)
+            //         loginSuccess();
+            //     else
+            //         loginFail();
+            // });
+
+        }
+
 
     });
 });
