@@ -7,7 +7,10 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/webSocket.js"></script>
+    <script src="/js/webSocket.js"></script>
+    <script src="/js/messages.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
 </head>
 <body>
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
@@ -48,6 +51,18 @@
             </table>
         </div>
     </div>
+</div>
+<div class="col-lg-6">
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>recipientId</th>
+            <th>value</th>
+        </tr>
+        </thead>
+        <tbody id="messages">
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

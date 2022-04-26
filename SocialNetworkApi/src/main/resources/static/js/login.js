@@ -15,7 +15,7 @@ $(document).ready(function () {
                 success: function (response) {
                     $.cookie("token", response.token)
                     // console.log( $.cookie('token'));
-                    window.location = 'http://localhost:8080/home';
+                    window.location = 'http://localhost:8080/homePage';
                 },
                 error: function (xhr, status, error) {
                     var err = JSON.parse(xhr.responseText);

@@ -39,7 +39,7 @@ public class UserMessagesRestController {
     @GetMapping(value = "/{recipientId}/messages")
     public ResponseEntity<Object> getAllMessagesBySenderAndRecipientId(@PathVariable(name = "recipientId") Long recipientId,
                                                                        @RequestParam(name = "pageNo", required = false, defaultValue = "0") Integer pageNo,
-                                                                       @RequestParam(name = "pageSize", required = false, defaultValue = "2") Integer pageSize,
+                                                                       @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                                                        Authentication authentication) {
         try {
             User recipient = userService.findById(recipientId);

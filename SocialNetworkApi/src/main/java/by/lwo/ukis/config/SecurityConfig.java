@@ -47,7 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(H2CONSOLE_ENDPOINT).permitAll()
                 .antMatchers(LOGIN_ENDPOINT).permitAll()
                 .antMatchers(REGISTRATION_ENDPOINT).permitAll()
-                .antMatchers("/swagger-ui.html/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 // Временно permitAll
                 .anyRequest().authenticated()
@@ -63,8 +62,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().mvcMatchers(HttpMethod.OPTIONS, "/**");
-        web.ignoring().mvcMatchers("/swagger-ui.html/**", "/configuration/**", "/swagger-resources/**", "/v2/api-docs","/webjars/**",
-                "/loginPage", "/login.js", "/allUsers.js", "/allUsers","/webSocket", "/webSocket.js", "/homePage");
-//        web.ignoring().antMatchers("/resources/static/**").anyRequest();
+        web.ignoring().mvcMatchers("/swagger-ui.html/**", "/swagger-ui/**", "/configuration/**",
+                "/swagger-resources/**", "/v2/api-docs/**", "/v3/api-docs/**", "/webjars/**");
+
+        web.ignoring().antMatchers("/js/**","/gs-guide-websocket/**");
+        web.ignoring().mvcMatchers("/loginPage", "/allUsers", "/homePage", "/messagesPage");
+
     }
+
 }
