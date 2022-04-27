@@ -46,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(H2CONSOLE_ENDPOINT).permitAll()
                 .antMatchers(LOGIN_ENDPOINT).permitAll()
+                .antMatchers("/loginPage", "/js/login.js").permitAll()
                 .antMatchers(REGISTRATION_ENDPOINT).permitAll()
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 // Временно permitAll
@@ -65,9 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().mvcMatchers("/swagger-ui.html/**", "/swagger-ui/**", "/configuration/**",
                 "/swagger-resources/**", "/v2/api-docs/**", "/v3/api-docs/**", "/webjars/**");
 
-        web.ignoring().antMatchers("/js/**","/gs-guide-websocket/**");
-        web.ignoring().mvcMatchers("/loginPage", "/allUsers", "/homePage", "/messagesPage");
-
+//        web.ignoring().antMatchers("/js/**");
+//        web.ignoring().mvcMatchers("/loginPage");
+//, "/allUsers", "/homePage", "/messagesPage"
     }
 
 }

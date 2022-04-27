@@ -4,7 +4,6 @@ $(document).ready(function () {
         url: "http://localhost:8080/api/v1/users/",
         headers: {
             Authorization: 'Bearer_' + $.cookie('token')
-            // Authorization: 'Bearer_eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY1MDk2MDgxMCwiZXhwIjoxNjUwOTYyNjEwfQ.aUEM7LdSrPb-N-xtrRJK5BenuLYmGqIJIwvq1V28V2s'
         },
         dataType: 'json',
 
@@ -15,25 +14,21 @@ $(document).ready(function () {
 										<td>" + value.id + "</td>\
 										<td>" + value.username + "</td>\
 										<td>" + value.email + "</td>\
+										<td>" + "<a title=\"Blah\" href=\"http://localhost:8080/messagesPage\">Message</a>" + "</td>\
 										</tr>");
             })
         },
+    // <td>" + "<a title=\"Blah\" href=\"http://localhost:8080/messagesPage?userId=" + value.id + "\">Message</a>" + "</td>\
+
         error: function(httpObj, textStatus) {
             console.log(httpObj.status);
-            // var err = JSON.parse(xhr.responseText);
-            //
-            // $("#message").html(err.message);
-
-            // request.error(function(httpObj, textStatus) {
-            //     if(httpObj.status==200)
-            //         loginSuccess();
-            //     else
-            //         loginFail();
-            // });
-
         }
 
 
     });
 });
+
+
+
+
 

@@ -69,24 +69,24 @@ INSERT INTO friends (id, user_id, friend_id, friend_status, status)
 VALUES (5, 4, 5, 'FRIEND', 'ACTIVE');
 
 --Messages
-INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
-VALUES (1, 2, 3, 'Hello', 'CREATED');
+INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status, created, updated)
+VALUES (1, 2, 3, 'Hello', 'CREATED',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP() );
 
-INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
-VALUES (2, 2, 3, 'Im vasy', 'CREATED');
+INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status, created, updated)
+VALUES (2, 2, 3, 'Im vasy', 'CREATED',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 
-INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
-VALUES (3, 3, 2, 'Hello vasy', 'CREATED');
+INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status, created, updated)
+VALUES (3, 3, 2, 'Hello vasy', 'CREATED',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 
 
-INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
-VALUES (4, 2, 3, 'Hello', 'CREATED');
+INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status, created, updated)
+VALUES (4, 2, 3, 'Hello', 'CREATED',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 
-INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
-VALUES (5, 2, 3, 'Im vasy', 'CREATED');
+INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status, created, updated)
+VALUES (5, 2, 3, 'Im vasy', 'CREATED',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 
-INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status)
-VALUES (6, 3, 2, 'Hello vasy', 'CREATED');
+INSERT INTO users_messages (id, recipient_id, sender_id, value_text, messages_status, created, updated)
+VALUES (6, 3, 2, 'Hello vasy', 'CREATED',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 
 --News
 INSERT INTO user_news (id, user_id, header, description, news_status)
