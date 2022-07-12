@@ -8,6 +8,9 @@ import org.springframework.context.annotation.ComponentScan;
 public class SocialNetworkApiApplication {
 
     public static void main(String[] args) {
+        String[] strings = args.clone();
+
+
         SpringApplication.run(SocialNetworkApiApplication.class, args);
     }
 
